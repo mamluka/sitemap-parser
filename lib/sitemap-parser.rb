@@ -5,7 +5,7 @@ class SitemapParser
 
   def initialize(url, opts = {})
     @url = url
-    @options = {:followlocation => true, :recurse => false, :url_regex => nil}.merge(opts)
+    @options = {:followlocation => true, :recurse => false, :url_regex => nil,threads: 8}.merge(opts)
   end
 
   def raw_sitemap
@@ -38,7 +38,7 @@ class SitemapParser
       found_urls = []
       if @options[:recurse]
         urls = sitemap.at('sitemapindex').search('sitemap')
-        filter_sitemap_urls(urls).each do |sitemap|
+        filter_sitemap_urls(urls).peach(@options[:threads] do |sitemap|
           child_sitemap_location = sitemap.at('loc').content
           found_urls << self.class.new(child_sitemap_location, :recurse => false).urls
         end
