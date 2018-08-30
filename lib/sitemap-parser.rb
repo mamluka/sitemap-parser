@@ -11,7 +11,7 @@ class SitemapParser
   def raw_sitemap
     @raw_sitemap ||= begin
       if @url =~ /\Ahttp/i
-        request_options = @options.dup.tap { |opts| opts.delete(:recurse); opts.delete(:url_regex) }
+        request_options = @options.dup.tap { |opts| opts.delete(:recurse); opts.delete(:url_regex) ; opts.delete(:threads) }
         request = Typhoeus::Request.new(@url, request_options)
         request.on_complete do |response|
           if response.success?
