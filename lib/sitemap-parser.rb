@@ -16,6 +16,8 @@ class SitemapParser
         request.on_complete do |response|
           if response.success?
             return response.body
+          elsif response.code == 404
+            return nil
           else
             raise "HTTP request to #{@url} failed"
           end
@@ -28,11 +30,12 @@ class SitemapParser
   end
 
   def sitemap
-    @sitemap ||= Nokogiri::XML(raw_sitemap)
+    @sitemap ||= raw_sitemap ? Nokogiri::XML(raw_sitemap) : nil
   end
 
   def urls
-    if sitemap.at('urlset')
+  return [] if not sitemap
+  if sitemap.at('urlset')
       filter_sitemap_urls(sitemap.at("urlset").search("url"))
     elsif sitemap.at('sitemapindex')
       found_urls = []
