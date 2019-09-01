@@ -48,7 +48,8 @@ class SitemapParser
       end
       return found_urls.flatten
     else
-      raise 'Malformed sitemap, no urlset'
+      p 'Malformed sitemap, no urlset'
+      return []
     end
   end
 
